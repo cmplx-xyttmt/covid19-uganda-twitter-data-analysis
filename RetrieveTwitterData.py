@@ -8,6 +8,7 @@ from pymongo import MongoClient
 def get_more_results(tweets):
     num_of_requests_made = 0
     statuses = tweets['statuses']
+    search_results = tweets
     tweets_retrieved = 0
     while True:
         print("Number of tweets so far: ", len(statuses) + tweets_retrieved)
@@ -16,7 +17,7 @@ def get_more_results(tweets):
             tweets_retrieved += len(statuses)
             statuses = []
         try:
-            next_results = tweets['search_metadata']['next_results']
+            next_results = search_results['search_metadata']['next_results']
         except KeyError as e:
             break
         kwargs = dict([kv.split("=") for kv in unquote(next_results[1:]).split("&")])
@@ -31,9 +32,9 @@ def get_more_results(tweets):
             break
         except Exception as e:
             print("{}".format(e))
+            break
 
     print("Number of requests before no results: ", num_of_requests_made + 1)
-    print("Number of tweets: ", len(statuses))
 
 
 def get_tweets(q_string):
