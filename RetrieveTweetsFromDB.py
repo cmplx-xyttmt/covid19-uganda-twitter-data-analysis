@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 from collections import Counter
 from prettytable import PrettyTable
+import io
+import json
 
 
 def get_tweets_from_db(_collection):
@@ -59,6 +61,17 @@ def print_frequency_table(label, data):
     print(pt)
 
 
+def write_to_json(_collection):
+    cursor = _collection.find()
+    with io.open('mask_tweets.json', 'w', encoding='utf-8') as f:
+        tweets = []
+        for tweet in cursor:
+            tweet.pop('_id')
+            tweets.append(tweet)
+        f.write(json.dumps({"tweets": tweets}, ensure_ascii=False, indent=5))
+        f.close()
+
+
 if __name__ == '__main__':
     # Setup db
     client = MongoClient('localhost', 27017)
@@ -71,3 +84,6 @@ if __name__ == '__main__':
     # Frequency analysis of words and hashtags
     print_frequency_table('Hashtag', get_hashtags(db.mask_tweets))
     print_frequency_table('Word', get_words(db.mask_tweets))
+
+    # Write to json file
+    write_to_json(db.mask_tweets)
