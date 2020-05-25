@@ -1,8 +1,5 @@
-import twitter
-import os
-from dotenv import load_dotenv
 from urllib.parse import unquote
-from pymongo import MongoClient
+from utils import setup_twitter_api, get_mongo_db_collection
 
 
 def create_query_string(lists, date_range):
@@ -40,6 +37,8 @@ def get_more_results(tweets):
             print("{}".format(e))
             break
 
+    if len(statuses) > 0:
+        save_tweets_to_mongodb(statuses)
     print("Number of requests before no results: ", num_of_requests_made + 1)
 
 
@@ -59,21 +58,10 @@ def save_tweets_to_mongodb(statuses):
 
 if __name__ == '__main__':
     # Setup Twitter API
-
-    load_dotenv()
-
-    API_KEY = os.getenv("TWITTER_API_KEY")
-    API_SECRET = os.getenv("TWITTER_API_SECRET")
-
-    auth = twitter.oauth.OAuth("", "", API_KEY, API_SECRET)
-
-    twitter_api = twitter.Twitter(auth=auth, retry=True)
+    twitter_api = setup_twitter_api(retry=True)
 
     # Setup MongoDB
-    client = MongoClient('localhost', 27017)
-    db = client['twitter_db']
-
-    _mask_tweets = db.mask_tweets
+    _mask_tweets = get_mongo_db_collection('twitter_db', 'mask_tweets')
 
     # Run query
     words_list = ["mask", "masks"]
@@ -81,7 +69,7 @@ if __name__ == '__main__':
     accounts_list = ["from:MinOfHealthUG", "from:newvisionwire", "from:nbstv", "from:KagutaMuseveni"]
     # locations_list = ["place:Uganda", "bio_location:Kampala"]
 
-    _date_range = {"since": "2020-05-17", "until": "2020-05-22"}
+    _date_range = {"since": "2020-05-17", "until": "2020-05-25"}
 
     _query_string = create_query_string([words_list, hashtags_list, accounts_list], _date_range)
     print("Query: ", _query_string)
