@@ -4,5 +4,6 @@ venv/
 .idea
 mask_tweets.json
 mask_tweets_v4.json
+mask_tweetsv3.json
 *.csv
 __pycache__/
