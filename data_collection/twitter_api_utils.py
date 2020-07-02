@@ -69,7 +69,6 @@ def get_tweets(initial_kwargs, twitter_api):
     search_results = tweets
     tweets_retrieved = 0
     while True:
-        print("Number of tweets so far: ", len(statuses) + tweets_retrieved)
         if len(statuses) >= 100:
             save_tweets_to_mongodb(statuses)
             tweets_retrieved += len(statuses)

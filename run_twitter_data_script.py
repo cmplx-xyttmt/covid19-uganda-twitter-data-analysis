@@ -29,7 +29,7 @@ def collect_tweets():
     twitter_api = setup_twitter_api()
     while True:
         kwargs = get_query_args(random_15_users(users_list), to_or_from=to_from[current_iteration % 2])
-
+        print("Retrieving tweets...")
         number_of_tweets = get_tweets(kwargs, twitter_api)
 
         print("Number of tweets retrieved for arguments {}: {}".format(kwargs, number_of_tweets))

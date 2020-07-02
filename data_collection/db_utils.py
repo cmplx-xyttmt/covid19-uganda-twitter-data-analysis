@@ -22,8 +22,7 @@ def save_tweets_to_mongodb(statuses):
     :param statuses: The list of tweets to save to the database
     """
     tweets_collection = get_mongo_db_collection(DATABASE_NAME, COLLECTION_NAME)
-    result = tweets_collection.insert_many(statuses)
-    print("Result of insert: {0}".format(result.inserted_ids))
+    tweets_collection.insert_many(statuses)
 
 
 def get_tweets_from_db(_collection):
