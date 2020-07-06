@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from urllib.parse import unquote
 from data_collection.db_utils import save_tweets_to_mongodb
+import logging
 
 
 def setup_twitter_api(retry=False):
@@ -51,7 +52,7 @@ def process_request(twitter_api, kwargs=None):
     try:
         tweets = twitter_api.search.tweets(**kwargs, tweet_mode='extended')
     except Exception as e:
-        print("Exception: {}".format(e))
+        logging.debug("Exception: {}".format(e))
 
     return tweets
 
@@ -80,11 +81,11 @@ def get_tweets(initial_kwargs, twitter_api):
             statuses += search_results['statuses']
             num_of_requests_made += 1
         except Exception as e:
-            print("No 'next_results', exiting: {}".format(e))
+            logging.info("No 'next_results', exiting: {}".format(e))
             break
 
     if len(statuses) > 0:
         save_tweets_to_mongodb(statuses)
         tweets_retrieved += len(statuses)
-    print("Number of requests before no results: ", num_of_requests_made + 1)
+    logging.info("Number of requests before no results: ", num_of_requests_made + 1)
     return tweets_retrieved

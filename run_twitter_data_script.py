@@ -2,6 +2,7 @@ from data_collection.twitter_api_utils import get_query_args, get_tweets, setup_
 from data_collection.db_utils import add_to_users_list
 import time
 import random
+import logging
 
 
 def random_15_users(users_list):
@@ -29,22 +30,23 @@ def collect_tweets():
     twitter_api = setup_twitter_api()
     while True:
         kwargs = get_query_args(random_15_users(users_list), to_or_from=to_from[current_iteration % 2])
-        print("Retrieving tweets...")
+        logging.info("Retrieving tweets...")
         number_of_tweets = get_tweets(kwargs, twitter_api)
 
-        print("Number of tweets retrieved for arguments {}: {}".format(kwargs, number_of_tweets))
+        logging.info("Number of tweets retrieved for arguments {}: {}".format(kwargs, number_of_tweets))
 
         # Update list of users
         users_list = add_to_users_list(users_list)
 
         # TODO: Print summary of db data
-        print("Number of users so far: {}".format(len(users_list)))
+        logging.info("Number of users so far: {}".format(len(users_list)))
 
-        print("Waiting for 2 minutes...")
+        logging.info("Waiting for 2 minutes...")
         time.sleep(120)
 
         current_iteration += 1
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='twitter_log.log', level=logging.INFO)
     collect_tweets()

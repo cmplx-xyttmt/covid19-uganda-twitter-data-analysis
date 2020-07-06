@@ -1,0 +1,1 @@
+/home/ubuntu/twitter/covid19-uganda-twitter-data-analysis/venv/bin/python /home/ubuntu/twitter/covid19-uganda-twitter-data-analysis/run_twitter_data_script.py
