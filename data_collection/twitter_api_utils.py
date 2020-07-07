@@ -87,5 +87,5 @@ def get_tweets(initial_kwargs, twitter_api):
     if len(statuses) > 0:
         save_tweets_to_mongodb(statuses)
         tweets_retrieved += len(statuses)
-    logging.info("Number of requests before no results: ", num_of_requests_made + 1)
+    logging.info("Number of requests before no results: {}".format(num_of_requests_made + 1))
     return tweets_retrieved
