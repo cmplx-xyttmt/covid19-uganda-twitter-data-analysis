@@ -52,6 +52,14 @@ def get_users_from_db(collection):
     return list(users)
 
 
+def get_all_users_from_db():
+    """
+    Retrieves all users from the database
+    :return: a list of users from the database
+    """
+    return get_users_from_db(get_mongo_db_collection(DATABASE_NAME, COLLECTION_NAME))
+
+
 def add_to_users_list(current_users_list):
     """
     Adds users from the database to the users list
@@ -59,6 +67,6 @@ def add_to_users_list(current_users_list):
     :return: a new list with both the current users and more users from the db.
     """
 
-    db_users = get_users_from_db(get_mongo_db_collection(DATABASE_NAME, COLLECTION_NAME))
+    db_users = get_all_users_from_db()
     new_users_list = set(current_users_list).union(set(db_users))
     return list(new_users_list)

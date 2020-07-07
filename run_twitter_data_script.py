@@ -1,5 +1,5 @@
 from data_collection.twitter_api_utils import get_query_args, get_tweets, setup_twitter_api
-from data_collection.db_utils import add_to_users_list
+from data_collection.db_utils import add_to_users_list, get_all_users_from_db
 import time
 import random
 import logging
@@ -24,10 +24,13 @@ def collect_tweets():
     Collects tweets and replies from users in a dynamically generated list (based on an initial list of users).
     """
     to_from = ["from", "to"]
-    users_list = ["MinOfHealthUG", "newvisionwire", "nbstv", "KagutaMuseveni", "ntvuganda", "observerug", "MoICT_Ug",
-                  "bukeddetv", "DailyMonitor", "CanaryMugume", "fsnakazibwe", "KKariisa", "nilepostnews", "AKasingye",
-                  "HEBobiwine", "kizzabesigye1", "cobbo3", "RedPepperUG", "AmamaMbabazi", "UrbanTVUganda"]
-    users_list = add_to_users_list(users_list)
+    users_list = get_all_users_from_db()
+    if not users_list:
+        users_list = ["MinOfHealthUG", "newvisionwire", "nbstv", "KagutaMuseveni", "ntvuganda", "observerug",
+                      "MoICT_Ug", "bukeddetv", "DailyMonitor", "CanaryMugume", "fsnakazibwe", "KKariisa",
+                      "nilepostnews", "AKasingye", "HEBobiwine", "kizzabesigye1", "cobbo3", "RedPepperUG",
+                      "AmamaMbabazi", "UrbanTVUganda"]
+    logging.info("Number of users: {}".format(len(users_list)))
 
     current_iteration = 0
     twitter_api = setup_twitter_api()
@@ -39,7 +42,8 @@ def collect_tweets():
         logging.info("Number of tweets retrieved for arguments {}: {}".format(kwargs, number_of_tweets))
 
         # Update list of users
-        users_list = add_to_users_list(users_list)
+        add_to_users_list(users_list)
+        users_list = get_all_users_from_db()
 
         # TODO: Print summary of db data
         logging.info("Number of users so far: {}".format(len(users_list)))
