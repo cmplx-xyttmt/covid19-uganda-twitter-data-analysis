@@ -20,7 +20,7 @@ logger = create_logger(__name__,
 URL_CONFIG = {
     "premium": {
         "token_name": "TWITTER_PREMIUM_BEARER_TOKEN",
-        "counts_url": f"{PREMIUM_API_URL}sbdev/counts.json",
+        "counts_url": f"{PREMIUM_API_URL}sbdev/counts.json"
     },
     "academic": {
         "token_name": "TWITTER_ACADEMIC_BEARER_TOKEN",
