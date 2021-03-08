@@ -9,10 +9,10 @@ from ReadTweetsFromJson import grouper
 from logging_utils import create_logger
 
 SUNBERT_API_URL = f"{auth('SUNBERT_API')}/predict_batch"
-logger = create_logger(__name__,
-                       filename='classification.log',
-                       logging_format="%(asctime)s: %(name)s: %(levelname)s: %(message)s",
-                       logging_level=logging.DEBUG)
+# logger = create_logger(__name__,
+#                        filename='classification.log',
+#                        logging_format="%(asctime)s: %(name)s: %(levelname)s: %(message)s",
+#                        logging_level=logging.DEBUG)
 
 start_time = datetime.now().timestamp()
 
@@ -22,7 +22,7 @@ def calculate_time_elapsed():
     seconds = curr_time - start_time
     minutes = seconds/60
     hours = minutes/60
-    logger.debug(f"Time elapsed: {seconds} seconds == {minutes} minutes == {hours} hours")
+    print(f"Time elapsed: {seconds} seconds == {minutes} minutes == {hours} hours")
 
 
 def make_json_data(tweet):
@@ -59,7 +59,7 @@ def classify_tweets(tweets, batch_size):
             update_db_record(prediction)
         total_tweets_done += len(batch_tweets)
         if i % 50 == 0:
-            logger.debug(f"Total tweets classified: {total_tweets_done}")
+            print(f"Total tweets classified: {total_tweets_done}")
             calculate_time_elapsed()
 
 
