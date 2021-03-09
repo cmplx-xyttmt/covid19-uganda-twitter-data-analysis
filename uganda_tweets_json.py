@@ -45,6 +45,8 @@ def get_classified_covid_tweets(tweets, chunk_size=5000):
     print(f'Total covid tweets: {len(covid_tweets)}')
     monthly_tweets = divide_tweets_into_months(tweets)
     for month in monthly_tweets:
+        if month in months_done:
+            continue
         month_tweets = monthly_tweets[month]
         month_cov_tweets = [tweet for tweet in month_tweets if tweet['prediction']['classification'] == 'Covid']
         json_directory = f"{DATA_DIR}/{month}"
@@ -81,4 +83,5 @@ if __name__ == '__main__':
     #         delete_files()
 
     tweets_ = [tweet_ for tweet_ in tweets_ if 'prediction' in tweet_]
+    months_done = {'2021-2', '2021-1'}
     get_classified_covid_tweets(tweets_)
