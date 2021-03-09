@@ -54,13 +54,13 @@ def get_classified_covid_tweets(tweets, chunk_size=5000):
             write_covid_tweets_to_json(f"{json_directory}/covid_tweets.json", month_cov_tweets,
                                        len(month_tweets), len(month_cov_tweets))
         else:
-            json_directory = f"{DATA_DIR}/{month}"
             for i, group in enumerate(grouper(month_cov_tweets, chunk_size)):
                 cov_tweets = [tweet for tweet in group if tweet is not None]
                 write_covid_tweets_to_json(f"{json_directory}/covid_tweets_{i + 1}.json", cov_tweets,
                                            len(month_tweets), len(month_cov_tweets))
                 if (i + 1) % 10 == 0:
                     delete_files()
+                    os.makedirs(json_directory)
         delete_files()
 
 
