@@ -83,5 +83,5 @@ if __name__ == '__main__':
     #         delete_files()
 
     tweets_ = [tweet_ for tweet_ in tweets_ if 'prediction' in tweet_]
-    months_done = {'2021-2', '2021-1'}
+    months_done = {'2021-2', '2021-1', '2020-12', '2020-11', '2020-10'}
     get_classified_covid_tweets(tweets_)
