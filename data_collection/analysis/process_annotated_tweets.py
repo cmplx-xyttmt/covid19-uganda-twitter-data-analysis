@@ -83,8 +83,29 @@ def make_csv(tweets: List[dict], filename: str):
         output_file.close()
 
 
+def create_2019_training_data():
+    # create training data from 2019 tweets
+    for month in range(1, 13):
+        json_file = f'../location_premium/data/2019_{month}_tweets.json'
+        with io.open(json_file, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+            f.close()
+        tweets = json_data['tweets']
+        print(f"Number of tweets for {month}: {json_data['count']}")
+        final_tweets = []
+        for tweet in tweets:
+            final_tweets.append({
+                "id": tweet['id'],
+                "text": filter_covid_words(tweet['text']),
+                'category': 'Non-COVID'
+            })
+        make_csv(final_tweets, f"data/annotated/2019-{month}-annotated.csv")
+
+
 if __name__ == '__main__':
-    curr_file = "influencers5"
-    initial_tweets = get_tweets_from_json_file(f"data/annotated/{curr_file}-annotated.json")
-    _final_tweets = process_annotated_tweets(initial_tweets)
-    make_csv(_final_tweets, f"data/annotated/{curr_file}-annotated.csv")
+    # curr_file = "influencers5"
+    # initial_tweets = get_tweets_from_json_file(f"data/annotated/{curr_file}-annotated.json")
+    # _final_tweets = process_annotated_tweets(initial_tweets)
+    # make_csv(_final_tweets, f"data/annotated/{curr_file}-annotated.csv")
+
+    create_2019_training_data()

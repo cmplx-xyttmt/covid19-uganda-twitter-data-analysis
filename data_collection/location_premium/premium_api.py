@@ -3,6 +3,7 @@ import json
 import io
 import time
 import logging
+import random
 
 from datetime import datetime
 from data_collection.twitterv2.twitter_api import auth, create_headers, connect_to_endpoint
@@ -138,17 +139,54 @@ def create_tweets_url(query, start_time, end_time, max_results=500, time_type="r
     return url
 
 
+def get_2019_random_tweets():
+    bearer_token = auth(URL_CONFIG["academic"]["token_name"])
+    headers = create_headers(bearer_token)
+    requests_made = 0
+    for month in range(1, 13):
+        days = random.sample(range(1, 28 if month == 2 else 30), 20)
+        tweets = []
+        for day in days:
+            from_date = datetime(2019, month, day).strftime("%Y-%m-%dT%H:%M:%SZ")
+            to_date = datetime(2019, month, day + 1).strftime("%Y-%m-%dT%H:%M:%SZ")
+            url = create_tweets_url("place_country:UG", start_time=from_date,
+                                    end_time=to_date, max_results=500, time_type="all")
+            results, status = connect_to_endpoint(url, headers)
+            requests_made += 1
+            if status == 200:
+                tweets.extend(results['data'])
+            elif status == 429:
+                while status == 429:
+                    print("Rate limit exceeded.")
+                    print(f"Requests made so far: {requests_made}")
+                    print(f"Current month: {month}. Tweets collected: {len(tweets)}")
+                    print("Waiting for 10 minutes")
+                    time.sleep(600)
+                    print("Making request again...")
+                    results, status = connect_to_endpoint(url, headers)
+                    requests_made += 1
+                if status == 200:
+                    tweets.extend(results['data'])
+            else:
+                print(f"Fatal error: {status}\n{json.dumps(results, indent=4)}")
+        with io.open(f'data/2019_{month}_tweets.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps({"tweets": tweets, "count": len(tweets)}, ensure_ascii=False, indent=5))
+
+
 if __name__ == '__main__':
     # For premium and counts api
     # _from_date = datetime(2020, 3, 1).strftime("%Y%m%d%H%M")
     # _to_date = datetime(2021, 3, 2).strftime("%Y%m%d%H%M")
 
-    # For academic twitter
-    _from_date = datetime(2020, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ")
-    _to_date = datetime(2021, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # # For academic twitter
+    # _from_date = datetime(2020, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ")
+    # _to_date = datetime(2021, 3, 1).strftime("%Y-%m-%dT%H:%M:%SZ")
+    #
+    # # make_counts_request("place_country:UG", _from_date, _to_date, api_type="academic")
+    # # make_data_request("place_country:UG since", _from_date, _to_date)
+    # _url = create_tweets_url("place_country:UG", start_time=_from_date,
+    #                          end_time=_to_date, max_results=500, time_type="all")
+    # make_data_request(_url)
 
-    # make_counts_request("place_country:UG", _from_date, _to_date, api_type="academic")
-    # make_data_request("place_country:UG since", _from_date, _to_date)
-    _url = create_tweets_url("place_country:UG", start_time=_from_date,
-                             end_time=_to_date, max_results=500, time_type="all")
-    make_data_request(_url)
+    # 2019 tweets
+    get_2019_random_tweets()
